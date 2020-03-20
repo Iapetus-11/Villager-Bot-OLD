@@ -26,11 +26,13 @@
 * __!!shop__ (opens the Villager Shop where you can buy items)
 * __!!deposit__ *amount in emerald blocks* (deposits emerald blocks into the emerald vault)
 * __!!withdraw__ *amount in emerald blocks* (withdraws emerald blocks from the emerald vault)
+* __!!leaderboard__ (shows the people with the most emeralds)
 
 ### Useful Minecraft Commands
 * __!!mcping__ *ip:port* (pings and gets information on the specified Minecraft server)
 * __!!mcpeping__ *ip* (pings and gets the playercount of a Bedrock Edition Minecraft server)
 * __!!stealskin__ *gamertag* (steal another Minecraft player's skin)
+* __!!getuuid__ *gamertag* (get the uuid of the specified player)
 
 ### Utility/Info Commands
 * __!!help__ (displays all the main commands)

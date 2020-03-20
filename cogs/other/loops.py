@@ -11,6 +11,7 @@ class Loops(commands.Cog):
         self.bot = bot
         
         self.g = self.bot.get_cog("Global")
+        self.db = self.bot.get_cog("Database")
         
         with open("data/keys.json", "r") as k:
             keys = json.load(k)
@@ -21,9 +22,9 @@ class Loops(commands.Cog):
         self.logger.setLevel(logging.INFO)
         
     def cog_unload(self):
-        self.bot.loop.create_task(self.stop_dblpy())
+        self.bot.loop.create_task(self.stop_tasks())
         
-    async def stop_dblpy(self):
+    async def stop_tasks(self):
         await self.dblpy.close()
         
     async def updateTopGGStats(self):

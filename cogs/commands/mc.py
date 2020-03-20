@@ -13,6 +13,13 @@ import asyncio
 class Minecraft(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.ses = aiohttp.ClientSession()
+        
+    def cog_unload(self):
+        self.bot.loop.create_task(self.stopses())
+        
+    async def stopses(self):
+        await self.ses.stop()
         
     @commands.command(name="mcping") #pings a java edition minecraft server
     async def mcping(self, ctx):
@@ -46,7 +53,7 @@ class Minecraft(commands.Cog):
         s.setblocking(0)
         try:
             s.sendto(ping.buffer, (socket.gethostbyname(server), 19132))
-            await asyncio.sleep(1)
+            await asyncio.sleep(.75)
             recvData = s.recvfrom(2048)
         except BlockingIOError:
             await ctx.send(embed=discord.Embed(color=discord.Color.green(), description="**"+server+"** is either offline or unavailable at the moment. Did you type the ip correctly?"))
@@ -64,17 +71,16 @@ class Minecraft(commands.Cog):
     @commands.command(name="stealskin", aliases=["skinsteal", "skin"])
     @commands.cooldown(1, 2.5, commands.BucketType.user)
     async def skinner(self, ctx, *, gamertag: str):
-        ses = aiohttp.ClientSession()
-        response = await ses.get("https://api.mojang.com/users/profiles/minecraft/"+gamertag)
+        response = await self.ses.get("https://api.mojang.com/users/profiles/minecraft/"+gamertag)
         if response.status == 204:
             await ctx.send(embed=discord.Embed(color=discord.Color.green(), description="Profile not found!"))
             return
         uuid = json.loads(await response.text())["id"]
-        response = await ses.get("https://sessionserver.mojang.com/session/minecraft/profile/"+str(uuid)+"?unsigned=false")
+        response = await self.ses.get("https://sessionserver.mojang.com/session/minecraft/profile/"+str(uuid)+"?unsigned=false")
         content = json.loads(await response.text())
         if "error" in content:
             if content["error"] == "TooManyRequestsException":
-                await ctx.send(embed=discord.Embed(color=discord.Color.green(), description="Stop sending so many requests! Try again in a minute!"))
+                await ctx.send(embed=discord.Embed(color=discord.Color.green(), description="Hey! Slow down!"))
                 return
         undec = base64.b64decode(content["properties"][0]["value"])
         try:
@@ -86,6 +92,16 @@ class Minecraft(commands.Cog):
         skinEmbed.set_thumbnail(url=url)
         skinEmbed.set_image(url="https://mc-heads.net/body/"+gamertag)
         await ctx.send(embed=skinEmbed)
+        
+    @commands.command(name="getuuid", aliases=["uuid"])
+    @commands.cooldown(1, 1, commands.BucketType.user)
+    async def getuuid(self, ctx, *, gamertag: str):
+        r = await self.ses.post("https://api.mojang.com/profiles/minecraft", json=[gamertag])
+        j = json.loads(await r.text()) #[0]['id']
+        if j == []:
+            await ctx.send(embed=discord.Embed(color=discord.Color.green(), description="That user could not be found."))
+            return
+        await ctx.send(embed=discord.Embed(color=discord.Color.green(), description=f"{gamertag}: ``{j[0]['id']}``"))
         
 def setup(bot):
     bot.add_cog(Minecraft(bot))
