@@ -1,3 +1,5 @@
+# This repository now lives [here](https://github.com/Villager-Bot/Villager-Bot)!
+
 # **Villager Bot** [![Discord Bots](https://top.gg/api/widget/status/639498607632056321.svg?noavatar=true)](https://top.gg/bot/639498607632056321) [![Discord Bots](https://top.gg/api/widget/servers/639498607632056321.svg?noavatar=true)](https://top.gg/bot/639498607632056321)
 
 ### Notable Features:
